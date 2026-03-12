@@ -8,263 +8,105 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --navy: #232D45; --teal: #4E7077; --lime: #DEFF4C;
-    --sky: #77AEB6; --orange: #DA7B3B; --white: #F5F8F8;
-  }
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--navy); min-height: 100vh;
-    display: flex; flex-direction: column; align-items: center;
-    padding: 40px 20px 80px; color: var(--white);
-  }
-  header { text-align: center; margin-bottom: 40px; }
-  .brand-tag {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: var(--lime); color: var(--navy);
-    font-size: 10px; font-weight: 700; letter-spacing: 0.22em;
-    text-transform: uppercase; padding: 6px 14px; border-radius: 2px; margin-bottom: 14px;
-  }
-  h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.4rem,6vw,4rem); letter-spacing: 0.06em; color: var(--white); line-height: 1; }
-  h1 span { color: var(--lime); }
-  .subtitle { margin-top: 10px; font-size: 13px; color: var(--sky); font-weight: 300; }
-
-  .workspace {
-    display: flex; gap: 40px; align-items: flex-start;
-    width: 100%; max-width: 1100px; flex-wrap: wrap; justify-content: center;
-  }
-
-  .panel {
-    background: rgba(78,112,119,0.13); border: 1px solid rgba(119,174,182,0.2);
-    border-radius: 4px; padding: 30px; width: 350px; flex-shrink: 0;
-  }
-  .panel-title {
-    font-family: 'Bebas Neue', sans-serif; font-size: 18px;
-    letter-spacing: 0.12em; color: var(--lime);
-    margin-bottom: 22px; padding-bottom: 12px;
-    border-bottom: 1px solid rgba(222,255,76,0.2);
-  }
-
-  /* Speaker info display (read-only) */
-  .speaker-info-block {
-    background: rgba(35,45,69,0.6); border: 1px solid rgba(119,174,182,0.15);
-    border-radius: 2px; padding: 14px; margin-bottom: 20px;
-  }
-  .speaker-info-name {
-    font-family: 'Bebas Neue', sans-serif; font-size: 22px;
-    letter-spacing: 0.06em; color: var(--white); line-height: 1.1;
-  }
-  .speaker-info-title {
-    font-size: 12px; color: var(--sky); margin-top: 4px; font-weight: 300;
-  }
-
-  .field { margin-bottom: 18px; }
-  label {
-    display: block; font-size: 10px; letter-spacing: 0.18em;
-    text-transform: uppercase; color: var(--sky); font-weight: 500; margin-bottom: 7px;
-  }
-  textarea {
-    width: 100%; padding: 11px 13px;
-    border: 1.5px solid rgba(119,174,182,0.25); border-radius: 2px;
-    font-family: 'DM Sans', sans-serif; font-size: 13px;
-    color: var(--white); background: rgba(35,45,69,0.7);
-    transition: border-color 0.2s; outline: none; resize: none; line-height: 1.5;
-  }
-  textarea:focus { border-color: var(--lime); background: rgba(35,45,69,0.95); }
-  textarea::placeholder { color: rgba(119,174,182,0.4); }
-
-  .char-count { font-size: 10px; color: rgba(119,174,182,0.5); text-align: right; margin-top: 4px; }
-
-  .download-btn {
-    width: 100%; margin-top: 6px; padding: 14px;
-    background: var(--lime); color: var(--navy); border: none; border-radius: 2px;
-    font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.14em;
-    cursor: pointer; transition: all 0.2s;
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-  }
-  .download-btn:hover { background: #eeff6a; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(222,255,76,0.2); }
-  .download-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
-  /* Caption box */
-  .caption-box {
-    display: none; margin-top: 20px;
-    border-top: 1px solid rgba(119,174,182,0.2); padding-top: 20px;
-  }
-  .caption-label {
-    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--sky); font-weight: 500; margin-bottom: 8px;
-    display: flex; align-items: center; gap: 6px;
-  }
-  .caption-text {
-    background: rgba(35,45,69,0.8); border: 1.5px solid rgba(119,174,182,0.2);
-    border-radius: 2px; padding: 14px; margin-bottom: 10px;
-    font-size: 12px; color: rgba(245,248,248,0.85);
-    line-height: 1.65; white-space: pre-wrap;
-  }
-  .copy-btn {
-    width: 100%; padding: 11px;
-    background: transparent; color: var(--lime);
-    border: 1.5px solid var(--lime); border-radius: 2px;
-    font-family: 'DM Sans', sans-serif; font-size: 11px;
-    font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
-    cursor: pointer; transition: all 0.2s;
-  }
-  .copy-btn:hover { background: rgba(222,255,76,0.08); }
-  .copy-btn.copied { background: var(--lime); color: var(--navy); }
-
-  /* Error state */
-  .error-state {
-    display: none; text-align: center; padding: 40px 20px;
-    color: var(--orange); font-size: 14px; line-height: 1.6;
-  }
-
-  /* Preview */
-  .preview-area { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-  .preview-label {
-    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--sky); font-weight: 500; align-self: flex-start;
-  }
-
-  /* ── SPEAKER CARD ── */
-  #speaker-card {
-    width: 600px; height: 600px; position: relative;
-    overflow: hidden; flex-shrink: 0; border-radius: 3px; background: var(--navy);
-  }
-  .card-fallback { position: absolute; inset: 0; z-index: 0; background: #232D45; }
-  #card-bg-img {
-    position: absolute; top: 0; right: 0; bottom: 0; left: 30%;
-    background-size: cover; background-position: center top;
-    background-repeat: no-repeat; opacity: 0; z-index: 1; transition: opacity 0.4s;
-  }
-  #card-bg-img.loaded { opacity: 1; }
-  .card-overlay {
-    position: absolute; inset: 0; z-index: 2;
-    background: linear-gradient(180deg,
-      rgba(35,45,69,0.08) 0%, rgba(35,45,69,0.12) 40%,
-      rgba(35,45,69,0.78) 70%, rgba(35,45,69,0.97) 100%);
-  }
-  .card-left-fade {
-    position: absolute; top:0; left:0; bottom:0; width: 45%;
-    background: linear-gradient(to right, rgba(35,45,69,0.98) 0%, rgba(35,45,69,0.0) 100%);
-    z-index: 3;
-  }
-  .card-accent-bar {
-    position: absolute; left:0; top:0; bottom:0; width:6px;
-    background: linear-gradient(to bottom, var(--lime), var(--orange)); z-index: 5;
-  }
-  .card-corner {
-    position: absolute; width:34px; height:34px;
-    border-style: solid; border-width:0; border-color: var(--lime); z-index: 5; opacity: 0.6;
-  }
+  :root { --navy:#232D45; --teal:#4E7077; --lime:#DEFF4C; --sky:#77AEB6; --orange:#DA7B3B; --white:#F5F8F8; }
+  body { font-family:'DM Sans',sans-serif; background:var(--navy); min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:40px 20px 80px; color:var(--white); }
+  header { text-align:center; margin-bottom:40px; }
+  .brand-tag { display:inline-flex; align-items:center; gap:8px; background:var(--lime); color:var(--navy); font-size:10px; font-weight:700; letter-spacing:0.22em; text-transform:uppercase; padding:6px 14px; border-radius:2px; margin-bottom:14px; }
+  h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(2.4rem,6vw,4rem); letter-spacing:0.06em; color:var(--white); line-height:1; }
+  h1 span { color:var(--lime); }
+  .subtitle { margin-top:10px; font-size:13px; color:var(--sky); font-weight:300; }
+  .workspace { display:flex; gap:40px; align-items:flex-start; width:100%; max-width:1100px; flex-wrap:wrap; justify-content:center; }
+  .panel { background:rgba(78,112,119,0.13); border:1px solid rgba(119,174,182,0.2); border-radius:4px; padding:30px; width:350px; flex-shrink:0; }
+  .panel-title { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:0.12em; color:var(--lime); margin-bottom:22px; padding-bottom:12px; border-bottom:1px solid rgba(222,255,76,0.2); }
+  .speaker-info-block { background:rgba(35,45,69,0.6); border:1px solid rgba(119,174,182,0.15); border-radius:2px; padding:14px; margin-bottom:20px; display:flex; align-items:center; gap:12px; }
+  .speaker-thumb-sm { width:48px; height:48px; border-radius:2px; object-fit:cover; border:1px solid rgba(119,174,182,0.2); flex-shrink:0; display:none; }
+  .speaker-info-text { flex:1; }
+  .speaker-info-name { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:0.06em; color:var(--white); line-height:1.1; }
+  .speaker-info-title { font-size:12px; color:var(--sky); margin-top:3px; font-weight:300; }
+  .field { margin-bottom:18px; }
+  label { display:block; font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:var(--sky); font-weight:500; margin-bottom:7px; }
+  textarea { width:100%; padding:11px 13px; border:1.5px solid rgba(119,174,182,0.25); border-radius:2px; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--white); background:rgba(35,45,69,0.7); transition:border-color 0.2s; outline:none; resize:none; line-height:1.5; }
+  textarea:focus { border-color:var(--lime); background:rgba(35,45,69,0.95); }
+  textarea::placeholder { color:rgba(119,174,182,0.4); }
+  .char-count { font-size:10px; color:rgba(119,174,182,0.5); text-align:right; margin-top:4px; }
+  .download-btn { width:100%; margin-top:6px; padding:14px; background:var(--lime); color:var(--navy); border:none; border-radius:2px; font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:0.14em; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:10px; }
+  .download-btn:hover { background:#eeff6a; transform:translateY(-2px); box-shadow:0 8px 24px rgba(222,255,76,0.2); }
+  .download-btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+  .caption-box { display:none; margin-top:20px; border-top:1px solid rgba(119,174,182,0.2); padding-top:20px; }
+  .caption-label { font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:var(--sky); font-weight:500; margin-bottom:8px; }
+  .caption-text { background:rgba(35,45,69,0.8); border:1.5px solid rgba(119,174,182,0.2); border-radius:2px; padding:14px; margin-bottom:10px; font-size:12px; color:rgba(245,248,248,0.85); line-height:1.65; white-space:pre-wrap; }
+  .copy-btn { width:100%; padding:11px; background:transparent; color:var(--lime); border:1.5px solid var(--lime); border-radius:2px; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; cursor:pointer; transition:all 0.2s; }
+  .copy-btn:hover { background:rgba(222,255,76,0.08); }
+  .copy-btn.copied { background:var(--lime); color:var(--navy); }
+  .preview-area { display:flex; flex-direction:column; align-items:center; gap:12px; }
+  .preview-label { font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--sky); font-weight:500; align-self:flex-start; }
+  #speaker-card { width:600px; height:600px; position:relative; overflow:hidden; flex-shrink:0; border-radius:3px; background:var(--navy); }
+  .card-fallback { position:absolute; inset:0; z-index:0; background:#232D45; }
+  #card-bg-img { position:absolute; top:0; right:0; bottom:0; left:30%; background-size:cover; background-position:center top; background-repeat:no-repeat; opacity:0; z-index:1; transition:opacity 0.4s; }
+  #card-bg-img.loaded { opacity:1; }
+  .card-overlay { position:absolute; inset:0; z-index:2; background:linear-gradient(180deg,rgba(35,45,69,0.08) 0%,rgba(35,45,69,0.12) 40%,rgba(35,45,69,0.78) 70%,rgba(35,45,69,0.97) 100%); }
+  .card-left-fade { position:absolute; top:0; left:0; bottom:0; width:45%; background:linear-gradient(to right,rgba(35,45,69,0.98) 0%,rgba(35,45,69,0.0) 100%); z-index:3; }
+  .card-accent-bar { position:absolute; left:0; top:0; bottom:0; width:6px; background:linear-gradient(to bottom,var(--lime),var(--orange)); z-index:5; }
+  .card-corner { position:absolute; width:34px; height:34px; border-style:solid; border-width:0; border-color:var(--lime); z-index:5; opacity:0.6; }
   .card-corner.tl { top:22px; left:22px; border-top-width:2px; border-left-width:2px; }
   .card-corner.tr { top:22px; right:22px; border-top-width:2px; border-right-width:2px; }
   .card-corner.bl { bottom:22px; left:22px; border-bottom-width:2px; border-left-width:2px; }
   .card-corner.br { bottom:22px; right:22px; border-bottom-width:2px; border-right-width:2px; }
-  .card-logo {
-    position: absolute; top:24px; right:24px;
-    width: 185px; height: auto; object-fit: contain; z-index: 6;
-  }
-  .card-inner {
-    position: relative; z-index: 6;
-    padding: 44px 48px 100px 54px;
-    height: 100%; display: flex; flex-direction: column; justify-content: flex-end;
-  }
-  .card-tagline {
-    font-family: 'DM Sans', sans-serif; font-size: 11px; font-style: italic;
-    font-weight: 300; color: var(--lime); letter-spacing: 0.04em; margin-bottom: 3px;
-  }
-  .card-date {
-    font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 500;
-    letter-spacing: 0.13em; text-transform: uppercase; color: var(--sky); margin-bottom: 14px;
-  }
-  .card-name {
-    font-family: 'Bebas Neue', sans-serif; font-size: 58px; letter-spacing: 0.04em;
-    color: #fff; line-height: 0.95; margin-bottom: 8px; word-break: break-word;
-    text-shadow: 0 2px 16px rgba(0,0,0,0.5);
-  }
-  .card-title {
-    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400;
-    letter-spacing: 0.05em; color: var(--sky); margin-bottom: 18px; word-break: break-word;
-  }
-  .card-divider { width:40px; height:2px; background: var(--orange); margin-bottom:14px; flex-shrink:0; }
+  .card-logo { position:absolute; top:24px; right:24px; width:185px; height:auto; object-fit:contain; z-index:6; }
+  .card-inner { position:relative; z-index:6; padding:44px 48px 100px 54px; height:100%; display:flex; flex-direction:column; justify-content:flex-end; }
+  .card-tagline { font-family:'DM Sans',sans-serif; font-size:11px; font-style:italic; font-weight:300; color:var(--lime); letter-spacing:0.04em; margin-bottom:3px; }
+  .card-date { font-family:'DM Sans',sans-serif; font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--sky); margin-bottom:14px; }
+  .card-name { font-family:'Bebas Neue',sans-serif; font-size:58px; letter-spacing:0.04em; color:#fff; line-height:0.95; margin-bottom:8px; word-break:break-word; text-shadow:0 2px 16px rgba(0,0,0,0.5); }
+  .card-title { font-family:'DM Sans',sans-serif; font-size:13px; font-weight:400; letter-spacing:0.05em; color:var(--sky); margin-bottom:18px; word-break:break-word; }
+  .card-divider { width:40px; height:2px; background:var(--orange); margin-bottom:14px; flex-shrink:0; }
   .card-quote-wrap { display:flex; gap:8px; align-items:flex-start; }
-  .card-qmark {
-    font-family: 'Bebas Neue', sans-serif; font-size: 44px;
-    color: var(--lime); line-height: 0.75; flex-shrink: 0;
-  }
-  .card-quote {
-    font-family: 'DM Sans', sans-serif; font-size: 14px; font-style: italic;
-    font-weight: 300; color: rgba(245,248,248,0.88); line-height: 1.55; word-break: break-word;
-  }
-  .card-footer {
-    position: absolute; bottom:0; left:0; right:0; z-index: 7;
-    padding: 10px 50px 16px 54px;
-    display: flex; align-items: center; justify-content: space-between;
-    background: linear-gradient(to top, rgba(35,45,69,0.97) 0%, transparent 100%);
-  }
-  .card-footer-venue {
-    font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 300;
-    color: rgba(245,248,248,0.4); letter-spacing: 0.05em; font-style: italic;
-  }
-  .card-footer-tag {
-    font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 500;
-    color: rgba(222,255,76,0.55); letter-spacing: 0.1em;
-  }
-  .preview-hint { font-size: 11px; color: rgba(119,174,182,0.55); letter-spacing: 0.04em; }
-
-  @media (max-width: 680px) {
-    #speaker-card { width: 320px; height: 320px; }
-    .card-inner { padding: 28px 28px 80px 36px; }
-    .card-name { font-size: 32px; }
-    .card-logo { width: 110px; top:16px; right:16px; }
-    .card-footer { padding: 8px 28px 12px 36px; }
-    .panel { width: 320px; }
+  .card-qmark { font-family:'Bebas Neue',sans-serif; font-size:44px; color:var(--lime); line-height:0.75; flex-shrink:0; }
+  .card-quote { font-family:'DM Sans',sans-serif; font-size:14px; font-style:italic; font-weight:300; color:rgba(245,248,248,0.88); line-height:1.55; word-break:break-word; }
+  .card-footer { position:absolute; bottom:0; left:0; right:0; z-index:7; padding:10px 50px 16px 54px; display:flex; align-items:center; justify-content:space-between; background:linear-gradient(to top,rgba(35,45,69,0.97) 0%,transparent 100%); }
+  .card-footer-venue { font-family:'DM Sans',sans-serif; font-size:10px; font-weight:300; color:rgba(245,248,248,0.4); letter-spacing:0.05em; font-style:italic; }
+  .card-footer-tag { font-family:'DM Sans',sans-serif; font-size:10px; font-weight:500; color:rgba(222,255,76,0.55); letter-spacing:0.1em; }
+  .preview-hint { font-size:11px; color:rgba(119,174,182,0.55); letter-spacing:0.04em; }
+  @media (max-width:680px) {
+    #speaker-card { width:320px; height:320px; }
+    .card-inner { padding:28px 28px 80px 36px; }
+    .card-name { font-size:32px; }
+    .card-logo { width:110px; top:16px; right:16px; }
+    .card-footer { padding:8px 28px 12px 36px; }
+    .panel { width:320px; }
   }
 </style>
 </head>
 <body>
-
 <header>
   <div class="brand-tag">⭐ Future Fit Asia 2026</div>
   <h1>YOUR<br><span>SPEAKER CARD</span></h1>
   <p class="subtitle">Add your quote · Download your card · Copy your LinkedIn caption</p>
 </header>
-
-<div class="workspace" id="main-workspace">
-
-  <!-- Panel -->
+<div class="workspace">
   <div class="panel">
     <p class="panel-title">YOUR CARD</p>
-
-    <!-- Speaker info (read-only display) -->
     <div class="speaker-info-block">
-      <div class="speaker-info-name" id="display-name">—</div>
-      <div class="speaker-info-title" id="display-title">—</div>
+      <img class="speaker-thumb-sm" id="thumb-sm" alt="">
+      <div class="speaker-info-text">
+        <div class="speaker-info-name" id="display-name">—</div>
+        <div class="speaker-info-title" id="display-title">—</div>
+      </div>
     </div>
-
-    <!-- Quote field — ONLY editable field -->
     <div class="field">
       <label>✏️ Your Quote <span style="color:var(--lime);font-size:9px;text-transform:none;letter-spacing:0">(optional — appears on card)</span></label>
       <textarea id="inp-quote" rows="3" maxlength="160" placeholder="Share a memorable line from your talk…"></textarea>
       <div class="char-count"><span id="char-count">0</span>/160</div>
     </div>
-
     <button class="download-btn" id="download-btn">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-      </svg>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       DOWNLOAD MY CARD
     </button>
-
-    <!-- LinkedIn Caption -->
     <div class="caption-box" id="caption-box">
       <p class="caption-label">📋 Your LinkedIn Caption</p>
       <div class="caption-text" id="caption-text"></div>
       <button class="copy-btn" id="copy-btn">Copy Caption</button>
     </div>
   </div>
-
-  <!-- Preview -->
   <div class="preview-area">
     <p class="preview-label">Live Preview</p>
     <div id="speaker-card">
@@ -296,50 +138,42 @@
     </div>
     <p class="preview-hint">Downloads at 1080×1080px · perfect for LinkedIn &amp; Instagram</p>
   </div>
-
 </div>
-
 <script>
   function getParam(key) {
     return decodeURIComponent((new URLSearchParams(window.location.search).get(key) || ''));
   }
-
   const paramName    = getParam('name');
   const paramTitle   = getParam('title');
-  const paramPhoto   = getParam('photo');   // base64 image passed via param
+  const paramPhoto   = getParam('photo');
   const paramCaption = getParam('caption');
 
-  // Fill name
   if (paramName) {
     document.getElementById('display-name').textContent = paramName;
     document.getElementById('card-name').textContent = paramName.toUpperCase();
   }
-  // Fill title
   if (paramTitle) {
     document.getElementById('display-title').textContent = paramTitle;
     document.getElementById('card-title').textContent = paramTitle;
   }
-  // Fill photo from sessionStorage (passed by admin page)
-  const storedPhoto = sessionStorage.getItem('ffa_photo_' + paramName);
-  if (storedPhoto) {
+  if (paramPhoto) {
     const bg = document.getElementById('card-bg-img');
-    bg.style.backgroundImage = `url(${storedPhoto})`;
+    bg.style.backgroundImage = `url(${paramPhoto})`;
     bg.classList.add('loaded');
+    const thumb = document.getElementById('thumb-sm');
+    thumb.src = paramPhoto;
+    thumb.style.display = 'block';
   }
-
-  // Show caption
   if (paramCaption) {
     document.getElementById('caption-box').style.display = 'block';
     document.getElementById('caption-text').textContent = paramCaption;
   }
 
   // Quote live update
-  const quoteInput = document.getElementById('inp-quote');
-  const charCount  = document.getElementById('char-count');
-  quoteInput.addEventListener('input', () => {
-    const val = quoteInput.value.trim();
+  document.getElementById('inp-quote').addEventListener('input', function() {
+    const val = this.value.trim();
     document.getElementById('card-quote').textContent = val || 'Your quote will appear here.';
-    charCount.textContent = quoteInput.value.length;
+    document.getElementById('char-count').textContent = this.value.length;
   });
 
   // Copy caption
@@ -360,7 +194,7 @@
         scale: 1.8, useCORS: true, allowTaint: true, logging: false, backgroundColor: '#232D45'
       });
       const link = document.createElement('a');
-      link.download = `FFA2026-${(paramName || 'speaker').replace(/\s+/g,'-').toUpperCase()}-card.png`;
+      link.download = `FFA2026-${(paramName||'speaker').replace(/\s+/g,'-').toUpperCase()}-card.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
     } catch(e) { alert('Something went wrong. Please try again.'); }
