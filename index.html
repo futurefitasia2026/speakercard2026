@@ -214,9 +214,12 @@
   /* Background image layer */
   #card-bg-img {
     position: absolute;
-    inset: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 30%;
     background-size: cover;
-    background-position: center;
+    background-position: center top;
     background-repeat: no-repeat;
     transition: opacity 0.4s;
     opacity: 0;
@@ -229,10 +232,10 @@
     inset: 0;
     background: linear-gradient(
       180deg,
-      rgba(35,45,69,0.45) 0%,
-      rgba(35,45,69,0.60) 35%,
-      rgba(35,45,69,0.92) 70%,
-      rgba(35,45,69,0.98) 100%
+      rgba(35,45,69,0.10) 0%,
+      rgba(35,45,69,0.15) 40%,
+      rgba(35,45,69,0.75) 72%,
+      rgba(35,45,69,0.97) 100%
     );
     z-index: 1;
   }
