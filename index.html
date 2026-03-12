@@ -47,34 +47,37 @@
     background:#232D45;
   }
 
-  /* Photo only covers RIGHT half — left stays clean navy for text */
+  /* Photo strictly right 50% only */
   #card-bg-img {
     position:absolute;
     top:0; right:0; bottom:0;
-    width:55%;          /* right 55% only */
-    background-size:cover;
-    background-position:center top;
-    background-repeat:no-repeat;
-    opacity:0; transition:opacity 0.4s; z-index:1;
+    width:50%;
+    overflow:hidden;
+    z-index:1;
   }
-  #card-bg-img.loaded { opacity:1; }
+  #card-bg-img img {
+    width:100%; height:100%;
+    object-fit:cover; object-position:center top;
+    display:block; opacity:0; transition:opacity 0.4s;
+  }
+  #card-bg-img img.loaded { opacity:1; }
 
-  /* Fade photo into navy on its left edge */
+  /* Fade photo left edge into navy */
   .card-photo-fade {
     position:absolute;
     top:0; bottom:0;
-    right:calc(55% - 80px);
-    width:120px;
+    right:50%;
+    width:80px;
     background:linear-gradient(to right, #232D45 0%, transparent 100%);
     z-index:2;
     pointer-events:none;
   }
 
-  /* Solid navy block on far left — guarantees text area is clean */
+  /* Solid navy left half — text area always clean */
   .card-left-block {
     position:absolute;
     top:0; left:0; bottom:0;
-    width:48%;
+    width:50%;
     background:#232D45;
     z-index:2;
   }
@@ -178,7 +181,7 @@
     <p class="preview-label">Live Preview</p>
     <div id="speaker-card">
       <!-- Photo right side only -->
-      <div id="card-bg-img"></div>
+      <div id="card-bg-img"><img id="card-photo-img" alt="Speaker"></div>
       <div class="card-left-block"></div>
       <div class="card-photo-fade"></div>
       <div class="card-bottom-fade"></div>
@@ -225,9 +228,9 @@
     document.getElementById('card-title').textContent = paramTitle;
   }
   if (paramPhoto) {
-    const bg = document.getElementById('card-bg-img');
-    bg.style.backgroundImage = `url(${paramPhoto})`;
-    bg.classList.add('loaded');
+    const img = document.getElementById('card-photo-img');
+    img.src = paramPhoto;
+    img.onload = () => img.classList.add('loaded');
   }
   if (paramCaption) {
     document.getElementById('caption-box').style.display = 'block';
