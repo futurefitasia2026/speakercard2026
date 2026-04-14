@@ -28,6 +28,22 @@ input, textarea {
   box-sizing:border-box;
 }
 
+.section-title {
+  margin-top:20px;
+  margin-bottom:10px;
+  font-weight:bold;
+  opacity:0.9;
+}
+
+.row {
+  display:flex;
+  gap:10px;
+}
+
+.row input {
+  width:50%;
+}
+
 button {
   width:100%;
   padding:14px;
@@ -41,7 +57,7 @@ button {
   margin-top:20px;
   background:#1b2235;
   padding:10px;
-  word-break:break-word;
+  word-break:break-all;
 }
 </style>
 </head>
@@ -61,24 +77,37 @@ button {
 
 <textarea id="caption" placeholder="LinkedIn Caption"></textarea>
 
-<input id="tags" placeholder="Tags (use | e.g. Future Fit Asia|John Doe)">
+<div class="section-title">LinkedIn Profiles (optional)</div>
 
-<h4>LinkedIn Profiles (optional, up to 5)</h4>
+<!-- PAIR 1 -->
+<div class="row">
+  <input id="li1_name" placeholder="Name 1">
+  <input id="li1_url" placeholder="LinkedIn URL 1">
+</div>
 
-<input id="li1_name" placeholder="Name 1">
-<input id="li1_url" placeholder="URL 1">
+<!-- PAIR 2 -->
+<div class="row">
+  <input id="li2_name" placeholder="Name 2">
+  <input id="li2_url" placeholder="LinkedIn URL 2">
+</div>
 
-<input id="li2_name" placeholder="Name 2">
-<input id="li2_url" placeholder="URL 2">
+<!-- PAIR 3 -->
+<div class="row">
+  <input id="li3_name" placeholder="Name 3">
+  <input id="li3_url" placeholder="LinkedIn URL 3">
+</div>
 
-<input id="li3_name" placeholder="Name 3">
-<input id="li3_url" placeholder="URL 3">
+<!-- PAIR 4 -->
+<div class="row">
+  <input id="li4_name" placeholder="Name 4">
+  <input id="li4_url" placeholder="LinkedIn URL 4">
+</div>
 
-<input id="li4_name" placeholder="Name 4">
-<input id="li4_url" placeholder="URL 4">
-
-<input id="li5_name" placeholder="Name 5">
-<input id="li5_url" placeholder="URL 5">
+<!-- PAIR 5 -->
+<div class="row">
+  <input id="li5_name" placeholder="Name 5">
+  <input id="li5_url" placeholder="LinkedIn URL 5">
+</div>
 
 <button onclick="generate()">Generate Link</button>
 
@@ -95,7 +124,6 @@ function generate(){
   const photo = document.getElementById('photo').value.trim();
   const logo = document.getElementById('logo').value.trim();
   const caption = document.getElementById('caption').value.trim();
-  const tags = document.getElementById('tags').value.trim();
 
   if(!name || !job || !company || !photo){
     alert("Please fill required fields");
@@ -113,9 +141,8 @@ function generate(){
 
   if(logo) params.set("logo", logo);
   if(caption) params.set("caption", caption);
-  if(tags) params.set("tags", tags);
 
-  // FIXED SAFE APPEND (prevents index mismatch)
+  // LinkedIn pairs
   for(let i=1;i<=5;i++){
     const n = document.getElementById(`li${i}_name`).value.trim();
     const u = document.getElementById(`li${i}_url`).value.trim();
