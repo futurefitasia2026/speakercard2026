@@ -7,7 +7,7 @@
 
 <style>
 body {
-  font-family:Arial;
+  font-family: Arial;
   background:#232D45;
   color:white;
   padding:40px;
@@ -25,6 +25,7 @@ input, textarea {
   border:none;
   background:#1b2235;
   color:white;
+  box-sizing:border-box;
 }
 
 button {
@@ -52,6 +53,7 @@ button {
 <h2>Speaker Generator</h2>
 
 <input id="name" placeholder="Full Name">
+
 <input id="job" placeholder="Job Title">
 <input id="company" placeholder="Company">
 
@@ -59,6 +61,7 @@ button {
 <input id="logo" placeholder="Corporate Logo URL (optional)">
 
 <textarea id="caption" placeholder="LinkedIn Caption"></textarea>
+
 <input id="tags" placeholder="Tags (use | e.g. Future Fit Asia|John Doe|Jane Doe)">
 
 <button onclick="generate()">Generate Link</button>
@@ -79,11 +82,12 @@ function generate(){
   const tags = document.getElementById('tags').value.trim();
 
   if(!name || !job || !company || !photo){
-    alert("Fill required fields");
+    alert("Please fill required fields");
     return;
   }
 
   const title = job + " · " + company;
+
   const base = window.location.href.replace("admin.html","index.html");
 
   const params = new URLSearchParams();
