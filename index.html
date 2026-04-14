@@ -62,7 +62,7 @@ body {
   display:flex;
   align-items:center;
   gap:16px;
-  transform: translateX(10px);
+  transform:translateX(10px);
 }
 
 /* LOGO */
@@ -83,6 +83,7 @@ body {
   font-family:'Bebas Neue';
   font-size:40px;
   color:white;
+  line-height:1;
 }
 
 .title {
@@ -91,7 +92,18 @@ body {
   text-transform:uppercase;
 }
 
-/* CAPTION BOX */
+/* BUTTON */
+button {
+  width:600px;
+  padding:12px;
+  background:#DEFF4C;
+  border:none;
+  cursor:pointer;
+  font-weight:bold;
+  margin-top:10px;
+}
+
+/* CAPTION */
 .caption-box {
   width:600px;
   background:#1b2235;
@@ -107,15 +119,7 @@ body {
   border:none;
   padding:10px;
   margin-bottom:10px;
-}
-
-button {
-  width:100%;
-  padding:12px;
-  background:#DEFF4C;
-  border:none;
-  cursor:pointer;
-  font-weight:bold;
+  resize:none;
 }
 </style>
 </head>
@@ -129,19 +133,19 @@ src="https://futurefitasia.com/wp-content/uploads/2026/04/FFA2026-Promotion-Spea
 crossorigin="anonymous">
 
 <div class="photo-frame">
-<img id="photo">
+  <img id="photo">
 </div>
 
 <div class="text-block">
 
-<div class="logo" id="logo-box" style="display:none;">
-<img id="logo">
-</div>
+  <div class="logo" id="logo-box" style="display:none;">
+    <img id="logo">
+  </div>
 
-<div>
-<div class="name" id="name"></div>
-<div class="title" id="title"></div>
-</div>
+  <div>
+    <div class="name" id="name"></div>
+    <div class="title" id="title"></div>
+  </div>
 
 </div>
 
@@ -154,13 +158,13 @@ crossorigin="anonymous">
   <textarea id="captionText" readonly></textarea>
   <button onclick="copyCaption()">Copy LinkedIn Caption</button>
   <p style="font-size:12px;opacity:0.7;">
-    Tip: After pasting, type @ to tag people/companies on LinkedIn.
+    Tip: After pasting, type @ to tag people and companies on LinkedIn.
   </p>
 </div>
 
 <script>
 function getParam(k){
-  return decodeURIComponent(new URLSearchParams(window.location.search).get(k)||'');
+  return new URLSearchParams(window.location.search).get(k) || '';
 }
 
 const name = getParam('name');
@@ -182,13 +186,14 @@ if(caption){
   document.getElementById('captionText').value = caption;
 }
 
+/* COPY */
 function copyCaption(){
-  const text = document.getElementById('captionText');
-  text.select();
-  document.execCommand("copy");
+  const text = document.getElementById('captionText').value;
+  navigator.clipboard.writeText(text);
   alert("Copied! Paste on LinkedIn.");
 }
 
+/* DOWNLOAD */
 async function download(){
   const canvas = await html2canvas(document.getElementById('speaker-card'), {
     scale:2,
