@@ -21,14 +21,13 @@ body {
 }
 
 /* CARD */
-#speaker-card {
+#card {
   width:600px;
   height:600px;
   position:relative;
 }
 
-/* BACKGROUND */
-.card-bg {
+.bg {
   position:absolute;
   inset:0;
   width:100%;
@@ -36,8 +35,20 @@ body {
   object-fit:cover;
 }
 
+/* LOGO FIXED */
+.logo {
+  position:absolute;
+  top:20px;
+  right:20px;
+  width:80px;
+}
+
+.logo img {
+  width:100%;
+}
+
 /* PHOTO */
-.photo-frame {
+.photo {
   position:absolute;
   top:50%;
   left:50%;
@@ -47,37 +58,22 @@ body {
   overflow:hidden;
 }
 
-.photo-frame img {
+.photo img {
   width:100%;
   height:100%;
   object-fit:cover;
 }
 
-/* LOGO (FIXED) */
-.logo {
-  position:absolute;
-  top:20px;
-  right:20px;
-  width:80px;
-  height:auto;
-  z-index:5;
-}
-
-.logo img {
-  width:100%;
-}
-
 /* TEXT */
-.text-block {
+.text {
   position:absolute;
   bottom:20px;
   left:150px;
-  transform:translateX(10px);
 }
 
 .name {
-  font-family:'Bebas Neue';
   font-size:40px;
+  font-family:'Bebas Neue';
   color:white;
 }
 
@@ -86,30 +82,38 @@ body {
   color:#77AEB6;
 }
 
-/* RIGHT PANEL */
-.side-panel {
+/* SIDE PANEL */
+.panel {
   width:320px;
   display:flex;
   flex-direction:column;
   gap:16px;
 }
 
+/* TAGS */
 .box {
   background:#1b2235;
   padding:16px;
   color:white;
 }
 
-.box h3 {
-  font-size:14px;
-  margin-bottom:10px;
+a {
+  display:block;
+  color:#DEFF4C;
+  margin-bottom:6px;
+  text-decoration:none;
 }
 
-a {
-  color:#DEFF4C;
-  text-decoration:none;
-  display:block;
-  margin-bottom:6px;
+/* CAPTION ALIGN FIX */
+textarea {
+  width:100%;
+  height:160px;
+  background:#11182a;
+  color:white;
+  border:none;
+  padding:10px;
+  box-sizing:border-box;
+  font-family:'DM Sans';
 }
 
 button {
@@ -117,36 +121,35 @@ button {
   padding:12px;
   background:#DEFF4C;
   border:none;
-  cursor:pointer;
   font-weight:bold;
+  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<div id="speaker-card">
+<div id="card">
 
-<img class="card-bg" src="https://futurefitasia.com/wp-content/uploads/2026/04/FFA2026-Promotion-Speaker-2.png">
+<img class="bg" src="https://futurefitasia.com/wp-content/uploads/2026/04/FFA2026-Promotion-Speaker-2.png">
 
-<!-- FIXED LOGO -->
 <div class="logo" id="logoBox" style="display:none;">
   <img id="logoImg">
 </div>
 
-<div class="photo-frame">
+<div class="photo">
   <img id="photo">
 </div>
 
-<div class="text-block">
+<div class="text">
   <div class="name" id="name"></div>
   <div class="title" id="title"></div>
 </div>
 
 </div>
 
-<!-- SIDE -->
-<div class="side-panel">
+<!-- PANEL -->
+<div class="panel">
 
 <div class="box">
   <h3>LinkedIn Profiles</h3>
@@ -154,52 +157,46 @@ button {
 </div>
 
 <div class="box">
-  <h3>Caption</h3>
-  <textarea id="caption" readonly style="width:100%;height:140px;background:#11182a;color:white;border:none;padding:10px;"></textarea>
+  <textarea id="caption" readonly></textarea>
 </div>
 
 <button onclick="copy()">Copy Caption</button>
-<button onclick="copyOpen()">Copy + Open LinkedIn</button>
+<button onclick="openLI()">Copy + Open LinkedIn</button>
 <button onclick="download()">Download</button>
 
 </div>
 
 <script>
-function get(k){
-  return new URLSearchParams(window.location.search).get(k) || '';
+function getData(){
+  const raw = new URLSearchParams(window.location.search).get("data");
+  return raw ? JSON.parse(decodeURIComponent(raw)) : null;
 }
 
 window.onload = () => {
 
-  const name = get('name');
-  const title = get('title');
-  const photo = get('photo');
-  const logo = get('logo');
-  const caption = get('caption');
+  const d = getData();
+  if(!d) return;
 
-  if(name) document.getElementById('name').textContent = name;
-  if(title) document.getElementById('title').textContent = title;
-  if(photo) document.getElementById('photo').src = photo;
-  if(caption) document.getElementById('caption').value = caption;
+  document.getElementById('name').textContent = d.name;
+  document.getElementById('title').textContent = d.job + " · " + d.company;
+  document.getElementById('photo').src = d.photo;
+  document.getElementById('caption').value = d.caption;
 
-  /* FIXED LOGO */
-  if(logo){
-    document.getElementById('logoImg').src = logo;
-    document.getElementById('logoBox').style.display = 'block';
+  /* LOGO FIX */
+  if(d.logo){
+    document.getElementById('logoImg').src = d.logo;
+    document.getElementById('logoBox').style.display = "block";
   }
 
-  /* LinkedIn links */
-  const names = new URLSearchParams(window.location.search).getAll('li_name');
-  const urls = new URLSearchParams(window.location.search).getAll('li_url');
+  /* LINKS FIX */
+  const box = document.getElementById('links');
 
-  const container = document.getElementById('links');
-
-  names.forEach((n, i) => {
+  d.links.forEach(l => {
     const a = document.createElement('a');
-    a.href = urls[i];
+    a.href = l.url;
     a.target = "_blank";
-    a.textContent = n;
-    container.appendChild(a);
+    a.textContent = l.name;
+    box.appendChild(a);
   });
 }
 
@@ -208,15 +205,15 @@ function copy(){
   navigator.clipboard.writeText(document.getElementById('caption').value);
 }
 
-/* COPY + OPEN */
-function copyOpen(){
+/* OPEN */
+function openLI(){
   navigator.clipboard.writeText(document.getElementById('caption').value);
   window.open("https://www.linkedin.com/feed/", "_blank");
 }
 
 /* DOWNLOAD */
 async function download(){
-  const canvas = await html2canvas(document.getElementById('speaker-card'), {
+  const canvas = await html2canvas(document.getElementById('card'), {
     scale:2,
     useCORS:true
   });
