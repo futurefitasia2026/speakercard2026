@@ -4,117 +4,74 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Speaker Generator</title>
-
 <style>
-body {
-  font-family: Arial;
-  background:#232D45;
-  color:white;
-  padding:40px;
-}
-
-.container {
-  max-width:600px;
-  margin:auto;
-}
-
-input, textarea {
-  width:100%;
-  padding:10px;
-  margin-bottom:10px;
-  border:none;
-  background:#1b2235;
-  color:white;
-  box-sizing:border-box;
-}
-
-.row {
-  display:flex;
-  gap:10px;
-}
-
-.row input {
-  width:50%;
-}
-
-button {
-  width:100%;
-  padding:14px;
-  background:#DEFF4C;
-  border:none;
-  cursor:pointer;
-  font-weight:bold;
-}
-
-.output {
-  margin-top:20px;
-  background:#1b2235;
-  padding:10px;
-  word-break:break-word;
-}
+body { font-family: Arial, sans-serif; background: #232D45; color: white; padding: 40px; }
+.container { max-width: 600px; margin: auto; }
+input, textarea { width: 100%; padding: 10px; margin-bottom: 10px; border: none; background: #1b2235; color: white; box-sizing: border-box; }
+.row { display: flex; gap: 10px; }
+.row input { width: 50%; }
+button { width: 100%; padding: 14px; background: #DEFF4C; border: none; cursor: pointer; font-weight: bold; color: #1b2235; }
+.output { margin-top: 20px; background: #1b2235; padding: 15px; word-break: break-all; border-radius: 4px; min-height: 40px; }
+.output a { color: #DEFF4C; text-decoration: underline; }
 </style>
 </head>
-
 <body>
 
 <div class="container">
+    <h2>Speaker Generator</h2>
+    <input id="name" placeholder="Full Name (Required)">
+    <input id="job" placeholder="Job Title (Required)">
+    <input id="company" placeholder="Company (Required)">
+    <input id="photo" placeholder="Speaker Photo URL (Required)">
+    <input id="logo" placeholder="Corporate Logo URL (optional)">
+    <textarea id="caption" placeholder="LinkedIn Caption"></textarea>
 
-<h2>Speaker Generator</h2>
+    <h4>LinkedIn Profiles (optional)</h4>
+    <div class="row"><input id="n1" placeholder="Name 1"><input id="u1" placeholder="URL 1"></div>
+    <div class="row"><input id="n2" placeholder="Name 2"><input id="u2" placeholder="URL 2"></div>
+    <div class="row"><input id="n3" placeholder="Name 3"><input id="u3" placeholder="URL 3"></div>
+    <div class="row"><input id="n4" placeholder="Name 4"><input id="u4" placeholder="URL 4"></div>
+    <div class="row"><input id="n5" placeholder="Name 5"><input id="u5" placeholder="URL 5"></div>
 
-<input id="name" placeholder="Full Name">
-<input id="job" placeholder="Job Title">
-<input id="company" placeholder="Company">
-
-<input id="photo" placeholder="Speaker Photo URL">
-<input id="logo" placeholder="Corporate Logo URL (optional)">
-
-<textarea id="caption" placeholder="LinkedIn Caption"></textarea>
-
-<h4>LinkedIn Profiles (optional)</h4>
-
-<div class="row"><input id="n1"><input id="u1"></div>
-<div class="row"><input id="n2"><input id="u2"></div>
-<div class="row"><input id="n3"><input id="u3"></div>
-<div class="row"><input id="n4"><input id="u4"></div>
-<div class="row"><input id="n5"><input id="u5"></div>
-
-<button onclick="generate()">Generate Link</button>
-
-<div class="output" id="output"></div>
-
+    <button onclick="generate()">Generate Link</button>
+    <div class="output" id="output">Generated link will appear here...</div>
 </div>
 
 <script>
-function generate(){
+function generate() {
+    const data = {
+        name: document.getElementById('name').value.trim(),
+        job: document.getElementById('job').value.trim(),
+        company: document.getElementById('company').value.trim(),
+        photo: document.getElementById('photo').value.trim(),
+        logo: document.getElementById('logo').value.trim(),
+        caption: document.getElementById('caption').value.trim(),
+        links: []
+    };
 
-  const data = {
-    name: document.getElementById('name').value.trim(),
-    job: document.getElementById('job').value.trim(),
-    company: document.getElementById('company').value.trim(),
-    photo: document.getElementById('photo').value.trim(),
-    logo: document.getElementById('logo').value.trim(),
-    caption: document.getElementById('caption').value.trim(),
-    links: []
-  };
-
-  if(!data.name || !data.job || !data.company || !data.photo){
-    alert("Fill required fields");
-    return;
-  }
-
-  for(let i=1;i<=5;i++){
-    const n = document.getElementById('n'+i).value.trim();
-    const u = document.getElementById('u'+i).value.trim();
-    if(n && u){
-      data.links.push({name:n, url:u});
+    if (!data.name || !data.job || !data.company || !data.photo) {
+        alert("Please fill in all required fields.");
+        return;
     }
-  }
 
-  const base = window.location.href.replace("admin.html","index.html");
-  const encoded = encodeURIComponent(JSON.stringify(data));
+    for (let i = 1; i <= 5; i++) {
+        const n = document.getElementById('n' + i).value.trim();
+        const u = document.getElementById('u' + i).value.trim();
+        if (n && u) {
+            data.links.push({ name: n, url: u });
+        }
+    }
 
-  document.getElementById('output').textContent =
-    base + "?data=" + encoded;
+    // Fixed path logic: gets the current folder path and points to index.html
+    const currentPath = window.location.pathname;
+    const directory = currentPath.substring(0, currentPath.lastIndexOf('/'));
+    const base = window.location.origin + directory + "/index.html";
+    
+    const encoded = encodeURIComponent(JSON.stringify(data));
+    const finalURL = base + "?data=" + encoded;
+
+    const outputDiv = document.getElementById('output');
+    outputDiv.innerHTML = '<strong>Success! Copy this link:</strong><br><a href="' + finalURL + '" target="_blank">' + finalURL + '</a>';
 }
 </script>
 
