@@ -25,6 +25,7 @@ body {
   width:600px;
   height:600px;
   position:relative;
+  overflow: hidden;
 }
 
 .bg {
@@ -33,18 +34,6 @@ body {
   width:100%;
   height:100%;
   object-fit:cover;
-}
-
-/* LOGO FIXED */
-.logo {
-  position:absolute;
-  top:20px;
-  right:20px;
-  width:80px;
-}
-
-.logo img {
-  width:100%;
 }
 
 /* PHOTO */
@@ -64,22 +53,43 @@ body {
   object-fit:cover;
 }
 
-/* TEXT */
+/* TEXT & LOGO LAYOUT */
 .text {
   position:absolute;
-  bottom:20px;
+  bottom:30px;
   left:150px;
+  display: flex;
+  align-items: center; /* Aligns logo vertically with name/title */
+  gap: 15px;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
 }
 
 .name {
   font-size:40px;
   font-family:'Bebas Neue';
   color:white;
+  line-height: 1;
 }
 
 .title {
   font-size:13px;
   color:#77AEB6;
+  margin-top: 4px;
+}
+
+.logo {
+  width:60px; /* Adjusted size to fit next to text */
+  flex-shrink: 0;
+}
+
+.logo img {
+  width:100%;
+  height: auto;
+  display: block;
 }
 
 /* SIDE PANEL */
@@ -90,21 +100,31 @@ body {
   gap:16px;
 }
 
-/* TAGS */
 .box {
   background:#1b2235;
   padding:16px;
   color:white;
 }
 
-a {
+.link-item {
   display:block;
-  color:#DEFF4C;
-  margin-bottom:6px;
+  margin-bottom:12px;
   text-decoration:none;
 }
 
-/* CAPTION ALIGN FIX */
+.link-name {
+  color:#DEFF4C;
+  display: block;
+  font-weight: bold;
+}
+
+.link-url {
+  color: #77AEB6;
+  font-size: 11px;
+  display: block;
+  word-break: break-all;
+}
+
 textarea {
   width:100%;
   height:160px;
@@ -114,6 +134,7 @@ textarea {
   padding:10px;
   box-sizing:border-box;
   font-family:'DM Sans';
+  font-size: 13px;
 }
 
 button {
@@ -123,6 +144,7 @@ button {
   border:none;
   font-weight:bold;
   cursor:pointer;
+  margin-bottom: 5px;
 }
 </style>
 </head>
@@ -130,98 +152,94 @@ button {
 <body>
 
 <div id="card">
+    <img class="bg" src="https://futurefitasia.com/wp-content/uploads/2026/04/FFA2026-Promotion-Speaker-2.png">
 
-<img class="bg" src="https://futurefitasia.com/wp-content/uploads/2026/04/FFA2026-Promotion-Speaker-2.png">
+    <div class="photo">
+        <img id="photo">
+    </div>
 
-<div class="logo" id="logoBox" style="display:none;">
-  <img id="logoImg">
+    <div class="text">
+        <div class="logo" id="logoBox" style="display:none;">
+            <img id="logoImg">
+        </div>
+        <div class="details">
+            <div class="name" id="name"></div>
+            <div class="title" id="title"></div>
+        </div>
+    </div>
 </div>
 
-<div class="photo">
-  <img id="photo">
-</div>
-
-<div class="text">
-  <div class="name" id="name"></div>
-  <div class="title" id="title"></div>
-</div>
-
-</div>
-
-<!-- PANEL -->
 <div class="panel">
+    <div class="box">
+        <h3 style="margin-top:0;">LinkedIn Profiles</h3>
+        <div id="links"></div>
+    </div>
 
-<div class="box">
-  <h3>LinkedIn Profiles</h3>
-  <div id="links"></div>
-</div>
+    <div class="box">
+        <textarea id="caption" readonly></textarea>
+    </div>
 
-<div class="box">
-  <textarea id="caption" readonly></textarea>
-</div>
-
-<button onclick="copy()">Copy Caption</button>
-<button onclick="openLI()">Copy + Open LinkedIn</button>
-<button onclick="download()">Download</button>
-
+    <button onclick="copy()">Copy Caption</button>
+    <button onclick="openLI()">Copy + Open LinkedIn</button>
+    <button onclick="download()">Download Image</button>
 </div>
 
 <script>
 function getData(){
-  const raw = new URLSearchParams(window.location.search).get("data");
-  return raw ? JSON.parse(decodeURIComponent(raw)) : null;
+    const raw = new URLSearchParams(window.location.search).get("data");
+    return raw ? JSON.parse(decodeURIComponent(raw)) : null;
 }
 
 window.onload = () => {
+    const d = getData();
+    if(!d) return;
 
-  const d = getData();
-  if(!d) return;
+    document.getElementById('name').textContent = d.name;
+    document.getElementById('title').textContent = d.job + " · " + d.company;
+    document.getElementById('photo').src = d.photo;
+    document.getElementById('caption').value = d.caption;
 
-  document.getElementById('name').textContent = d.name;
-  document.getElementById('title').textContent = d.job + " · " + d.company;
-  document.getElementById('photo').src = d.photo;
-  document.getElementById('caption').value = d.caption;
+    if(d.logo){
+        document.getElementById('logoImg').src = d.logo;
+        document.getElementById('logoBox').style.display = "block";
+    }
 
-  /* LOGO FIX */
-  if(d.logo){
-    document.getElementById('logoImg').src = d.logo;
-    document.getElementById('logoBox').style.display = "block";
-  }
-
-  /* LINKS FIX */
-  const box = document.getElementById('links');
-
-  d.links.forEach(l => {
-    const a = document.createElement('a');
-    a.href = l.url;
-    a.target = "_blank";
-    a.textContent = l.name;
-    box.appendChild(a);
-  });
+    const box = document.getElementById('links');
+    d.links.forEach(l => {
+        const container = document.createElement('a');
+        container.href = l.url;
+        container.target = "_blank";
+        container.className = "link-item";
+        
+        container.innerHTML = `
+            <span class="link-name">${l.name}</span>
+            <span class="link-url">${l.url}</span>
+        `;
+        box.appendChild(container);
+    });
 }
 
-/* COPY */
 function copy(){
-  navigator.clipboard.writeText(document.getElementById('caption').value);
+    navigator.clipboard.writeText(document.getElementById('caption').value);
 }
 
-/* OPEN */
 function openLI(){
-  navigator.clipboard.writeText(document.getElementById('caption').value);
-  window.open("https://www.linkedin.com/feed/", "_blank");
+    navigator.clipboard.writeText(document.getElementById('caption').value);
+    window.open("https://www.linkedin.com/feed/", "_blank");
 }
 
-/* DOWNLOAD */
 async function download(){
-  const canvas = await html2canvas(document.getElementById('card'), {
-    scale:2,
-    useCORS:true
-  });
+    const card = document.getElementById('card');
+    const canvas = await html2canvas(card, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: null
+    });
 
-  const link = document.createElement('a');
-  link.download = "speaker.png";
-  link.href = canvas.toDataURL();
-  link.click();
+    const link = document.createElement('a');
+    link.download = `Speaker-${document.getElementById('name').textContent}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
 }
 </script>
 
