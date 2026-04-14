@@ -37,16 +37,14 @@ body {
   z-index:1;
 }
 
-/* ===== PHOTO (CENTERED PERFECTLY) ===== */
+/* ===== PHOTO (CENTER FRAME) ===== */
 .photo-frame {
   position:absolute;
   top:50%;
   left:50%;
-  transform:translate(-50%, -42%); /* slight upward tweak to match design */
-  
+  transform:translate(-50%, -42%);
   width:330px;
-  height:330px; /* 1:1 PERFECT SQUARE */
-  
+  height:330px;
   overflow:hidden;
   z-index:2;
 }
@@ -58,54 +56,58 @@ body {
   object-position:center;
 }
 
-/* ===== NAME ===== */
-.name {
+/* ===== TEXT BLOCK ===== */
+.text-block {
   position:absolute;
-  bottom:95px;
-  left:50%;
-  transform:translateX(-50%);
-  
-  font-family:'Bebas Neue', sans-serif;
-  font-size:36px;
-  letter-spacing:0.04em;
-  color:white;
-  text-align:center;
+  bottom:90px;
+  left:140px;
+  display:flex;
+  align-items:center;
+  gap:16px;
   z-index:3;
 }
 
-/* ===== TITLE ===== */
-.title {
-  position:absolute;
-  bottom:70px;
-  left:50%;
-  transform:translateX(-50%);
-  
-  font-size:12px;
-  color:#77AEB6;
-  text-transform:uppercase;
-  text-align:center;
-  letter-spacing:0.08em;
-  z-index:3;
-}
-
-/* ===== LOGO ===== */
+/* LOGO */
 .logo {
-  position:absolute;
-  bottom:85px;
-  left:60px;
-  
   width:70px;
-  height:40px;
-  z-index:3;
+  height:45px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
 .logo img {
-  width:100%;
-  height:100%;
+  max-width:100%;
+  max-height:100%;
   object-fit:contain;
 }
 
-/* ===== DOWNLOAD BUTTON ===== */
+/* NAME + TITLE STACK */
+.text-content {
+  display:flex;
+  flex-direction:column;
+}
+
+/* NAME */
+.name {
+  font-family:'Bebas Neue', sans-serif;
+  font-size:34px;
+  letter-spacing:0.04em;
+  color:white;
+  line-height:1;
+}
+
+/* TITLE */
+.title {
+  margin-top:6px;
+  font-size:11px;
+  color:#77AEB6;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  line-height:1.4;
+}
+
+/* DOWNLOAD BUTTON */
 button {
   position:absolute;
   bottom:-60px;
@@ -130,19 +132,24 @@ button {
 
   <!-- PHOTO -->
   <div class="photo-frame">
-    <img id="photo" src="">
+    <img id="photo">
   </div>
 
-  <!-- LOGO -->
-  <div class="logo" id="logo-box" style="display:none;">
-    <img id="logo">
+  <!-- TEXT + LOGO BLOCK -->
+  <div class="text-block">
+
+    <!-- LOGO -->
+    <div class="logo" id="logo-box" style="display:none;">
+      <img id="logo">
+    </div>
+
+    <!-- NAME + TITLE -->
+    <div class="text-content">
+      <div class="name" id="name"></div>
+      <div class="title" id="title"></div>
+    </div>
+
   </div>
-
-  <!-- NAME -->
-  <div class="name" id="name"></div>
-
-  <!-- TITLE -->
-  <div class="title" id="title"></div>
 
 </div>
 
@@ -167,7 +174,7 @@ if(photo){
 
 if(logo){
   document.getElementById('logo').src = logo;
-  document.getElementById('logo-box').style.display = 'block';
+  document.getElementById('logo-box').style.display = 'flex';
 }
 
 /* DOWNLOAD */
