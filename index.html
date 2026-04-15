@@ -41,7 +41,7 @@ body {
   position:absolute;
   top:50%;
   left:50%;
-  transform:translate(-50%, -46%); /* Slightly raised to make room for bottom logo */
+  transform:translate(-50%, -46%); 
   width:320px;
   height:320px;
   overflow:hidden;
@@ -53,17 +53,24 @@ body {
   object-fit:cover;
 }
 
-/* TEXT LAYOUT (Left Aligned) */
+/* TEXT & LOGO LAYOUT (Horizontal Flex) */
 .text {
   position:absolute;
   bottom:40px;
   left:150px;
   display: flex;
+  flex-direction: row; /* Horizontal alignment */
+  align-items: center; /* Vertically centers logo with text */
+  gap: 20px; /* Space between text and logo */
+}
+
+.details {
+  display: flex;
   flex-direction: column;
 }
 
 .name {
-  font-size:34px; /* Reduced from 40px */
+  font-size:34px; 
   font-family:'Bebas Neue';
   color:white;
   line-height: 1;
@@ -71,19 +78,16 @@ body {
 }
 
 .title {
-  font-size:12px; /* Reduced from 13px */
+  font-size:12px; 
   color:#77AEB6;
   margin-top: 6px;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
-/* LOGO AT CENTER BOTTOM */
+/* THE SUBTLE PILL CONTAINER (Updated positioning) */
 .logo {
-  position: absolute;
-  bottom: 25px;
-  left: 50%;
-  transform: translateX(-50%);
+  /* Positioning removed, now handled by flex parent .text */
   background: white;
   padding: 6px 14px;
   border-radius: 50px;
@@ -179,12 +183,14 @@ button {
     </div>
 
     <div class="text">
-        <div class="name" id="name"></div>
-        <div class="title" id="title"></div>
-    </div>
-
-    <div class="logo" id="logoBox" style="display:none;">
-        <img id="logoImg">
+        <div class="details">
+            <div class="name" id="name"></div>
+            <div class="title" id="title"></div>
+        </div>
+        
+        <div class="logo" id="logoBox" style="display:none;">
+            <img id="logoImg">
+        </div>
     </div>
 </div>
 
@@ -207,6 +213,7 @@ button {
 </div>
 
 <script>
+// Standard to Unicode Bold converter
 function makeBold(text) {
     const chars = {
         'a': '𝐚', 'b': '𝐛', 'c': '𝐜', 'd': '𝐝', 'e': '𝐞', 'f': '𝐟', 'g': '𝐠', 'h': '𝐡', 'i': '𝐢', 'j': '𝐣', 'k': '𝐤', 'l': '𝐥', 'm': '𝐦',
