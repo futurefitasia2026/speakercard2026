@@ -60,8 +60,8 @@ body {
   left:0;
   right:0;
   display: flex;
-  align-items: flex-start; /* Aligns logo top with name top */
-  padding: 0 140px; /* Aligns text with photo edge */
+  align-items: flex-start; 
+  padding: 0 140px; 
 }
 
 .text {
@@ -86,27 +86,26 @@ body {
   letter-spacing: 1px;
 }
 
-/* THE SUBTLE PILL CONTAINER (Positioned to photo right + name height) */
+/* THE SUBTLE PILL CONTAINER (Increased by 7%) */
 .logo-container {
   position: absolute;
-  /* (50% card center) + (160px photo radius) = Absolute right edge of photo */
   left: calc(50% + 160px); 
-  transform: translateX(-100%); /* Right-aligns logo to that point */
+  transform: translateX(-100%); 
   display: flex;
   align-items: center;
-  height: 34px; /* Matches the line-height/font-size of the name */
+  height: 34px; 
 }
 
 .logo {
   background: white;
-  padding: 4px 12px;
+  padding: 5px 14px; /* Slightly increased padding */
   border-radius: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  width: 60px;
-  height: 32px;
+  width: 64px; /* Increased from 60px */
+  height: 34px; /* Increased from 32px */
 }
 
 .logo img {
