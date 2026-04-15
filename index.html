@@ -38,13 +38,9 @@ body {
   z-index:1;
 }
 
-/* FIX: replaced transform:translate(-50%,-50%) with explicit pixel offsets.
-   html2canvas does not reliably render CSS transforms, causing the photo
-   to appear cropped/mispositioned in the downloaded image.
-   Math: top = 270 - 320/2 = 110, left = 300 - 320/2 = 140 */
 .photo {
   position:absolute;
-  top:160px;
+  top:110px;
   left:140px;
   width:320px;
   height:320px;
@@ -58,20 +54,25 @@ body {
   object-fit:cover;
 }
 
+/* Updated overlay to ensure content is contained */
 .content-overlay {
   position:absolute;
   bottom:40px;
   left:140px;
   width:320px;
   display:flex;
-  align-items:stretch;
+  justify-content: space-between;
+  align-items: flex-start;
   z-index:3;
 }
 
 .text {
   display:flex;
   flex-direction:column;
-  flex-grow:1;
+  flex: 1;
+  /* Ensures text doesn't push the logo out of the card */
+  overflow: hidden; 
+  padding-right: 10px;
 }
 
 .name {
@@ -80,6 +81,7 @@ body {
   color:white;
   line-height:1;
   letter-spacing:0.5px;
+  white-space: nowrap; /* Keep name on one line, shrink to fit */
 }
 
 .title {
@@ -88,12 +90,16 @@ body {
   margin-top:6px;
   text-transform:uppercase;
   letter-spacing:1px;
+  line-height: 1.2;
+  word-wrap: break-word; /* Allows long titles to wrap instead of overlap */
+  max-height: 32px; /* Limits to ~2 lines to prevent covering the photo bottom */
+  overflow: hidden;
 }
 
 .logo-container {
   display:flex;
   align-items:center;
-  align-self:stretch;
+  flex-shrink: 0;
 }
 
 .logo {
@@ -109,11 +115,12 @@ body {
 }
 
 .logo img {
-  max-width:100%;
-  max-height:100%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit:contain;
 }
 
+/* UI Panel */
 .panel {
   width:320px;
   display:flex;
@@ -216,6 +223,15 @@ button {
 </div>
 
 <script>
+/* Helper to scale down text if it's too wide */
+function adjustFontSize(element, maxWidth, minSize, currentSize) {
+    let size = currentSize;
+    while (element.scrollWidth > maxWidth && size > minSize) {
+        size--;
+        element.style.fontSize = size + "px";
+    }
+}
+
 function makeBold(text) {
   const chars = {
     'a':'𝐚','b':'𝐛','c':'𝐜','d':'𝐝','e':'𝐞','f':'𝐟','g':'𝐠','h':'𝐡','i':'𝐢','j':'𝐣','k':'𝐤','l':'𝐥','m':'𝐦',
@@ -236,9 +252,13 @@ window.onload = () => {
   const d = getData();
   if(!d) return;
 
-  document.getElementById('name').textContent = d.name;
-  document.getElementById('title').textContent = d.job + " · " + d.company;
-  document.getElementById('photo').src = d.photo;
+  const nameEl = document.getElementById('name');
+  const titleEl = document.getElementById('title');
+  const photoEl = document.getElementById('photo');
+
+  nameEl.textContent = d.name;
+  titleEl.textContent = d.job + " · " + d.company;
+  photoEl.src = d.photo;
 
   let processedCaption = d.caption.replace(/\*\*(.*?)\*\*/g, (match, p1) => makeBold(p1));
   document.getElementById('caption').value = processedCaption;
@@ -247,6 +267,11 @@ window.onload = () => {
     document.getElementById('logoImg').src = d.logo;
     document.getElementById('logoBox').style.display = "flex";
   }
+
+  /* Run Font Adjustment after text is set */
+  // Max width is container (320px) minus logo (~80px)
+  adjustFontSize(nameEl, 240, 18, 34); 
+  adjustFontSize(titleEl, 240, 10, 12);
 
   const box = document.getElementById('links');
   d.links.forEach(l => {
