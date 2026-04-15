@@ -41,9 +41,9 @@ body {
   position:absolute;
   top:50%;
   left:50%;
-  transform:translate(-50%, -42%);
-  width:330px;
-  height:330px;
+  transform:translate(-50%, -46%); /* Slightly raised to make room for bottom logo */
+  width:320px;
+  height:320px;
   overflow:hidden;
 }
 
@@ -53,45 +53,46 @@ body {
   object-fit:cover;
 }
 
-/* TEXT & LOGO LAYOUT */
+/* TEXT LAYOUT (Left Aligned) */
 .text {
   position:absolute;
-  bottom:30px;
+  bottom:40px;
   left:150px;
-  display: flex;
-  align-items: center; 
-  gap: 15px;
-}
-
-.details {
   display: flex;
   flex-direction: column;
 }
 
 .name {
-  font-size:40px;
+  font-size:34px; /* Reduced from 40px */
   font-family:'Bebas Neue';
   color:white;
   line-height: 1;
+  letter-spacing: 0.5px;
 }
 
 .title {
-  font-size:13px;
+  font-size:12px; /* Reduced from 13px */
   color:#77AEB6;
-  margin-top: 4px;
+  margin-top: 6px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-/* THE SUBTLE PILL CONTAINER */
+/* LOGO AT CENTER BOTTOM */
 .logo {
+  position: absolute;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
   background: white;
-  padding: 8px 12px;
-  border-radius: 50px; /* Pill shape */
+  padding: 6px 14px;
+  border-radius: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-  width: 70px; /* Specific width to maintain "premium badge" look */
-  height: 40px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  width: 65px;
+  height: 35px;
   flex-shrink: 0;
 }
 
@@ -163,6 +164,7 @@ button {
   font-weight:bold;
   cursor:pointer;
   margin-bottom: 5px;
+  color: #1b2235;
 }
 </style>
 </head>
@@ -177,13 +179,12 @@ button {
     </div>
 
     <div class="text">
-        <div class="logo" id="logoBox" style="display:none;">
-            <img id="logoImg">
-        </div>
-        <div class="details">
-            <div class="name" id="name"></div>
-            <div class="title" id="title"></div>
-        </div>
+        <div class="name" id="name"></div>
+        <div class="title" id="title"></div>
+    </div>
+
+    <div class="logo" id="logoBox" style="display:none;">
+        <img id="logoImg">
     </div>
 </div>
 
@@ -206,7 +207,6 @@ button {
 </div>
 
 <script>
-// Unicode Bold Converter
 function makeBold(text) {
     const chars = {
         'a': '𝐚', 'b': '𝐛', 'c': '𝐜', 'd': '𝐝', 'e': '𝐞', 'f': '𝐟', 'g': '𝐠', 'h': '𝐡', 'i': '𝐢', 'j': '𝐣', 'k': '𝐤', 'l': '𝐥', 'm': '𝐦',
@@ -231,8 +231,8 @@ window.onload = () => {
     document.getElementById('title').textContent = d.job + " · " + d.company;
     document.getElementById('photo').src = d.photo;
 
-    // Process bold text in caption
-    let processedCaption = d.caption.replace(/\*\?(.*?)\*\*/g, (match, p1) => {
+    // Process bold text using ** notation
+    let processedCaption = d.caption.replace(/\*\*(.*?)\*\*/g, (match, p1) => {
         return makeBold(p1);
     });
     document.getElementById('caption').value = processedCaption;
