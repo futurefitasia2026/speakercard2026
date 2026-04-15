@@ -36,13 +36,13 @@ body {
   object-fit:cover;
 }
 
-/* PHOTO */
+/* PHOTO (Positioned as reference) */
 .photo {
   position:absolute;
   top:50%;
   left:50%;
   transform:translate(-50%, -46%); 
-  width:320px;
+  width:320px; /* Radius is 160px */
   height:320px;
   overflow:hidden;
 }
@@ -53,15 +53,13 @@ body {
   object-fit:cover;
 }
 
-/* TEXT & LOGO LAYOUT (Horizontal Flex) */
+/* TEXT LAYOUT (Left Aligned) */
 .text {
   position:absolute;
   bottom:40px;
   left:150px;
   display: flex;
-  flex-direction: row; /* Horizontal alignment */
-  align-items: center; /* Vertically centers logo with text */
-  gap: 20px; /* Space between text and logo */
+  flex-direction: column;
 }
 
 .details {
@@ -85,9 +83,15 @@ body {
   letter-spacing: 1px;
 }
 
-/* THE SUBTLE PILL CONTAINER (Updated positioning) */
+/* LOGO POSITIONED RELATIVE TO PHOTO (Aligned Right-Bottom) */
 .logo {
-  /* Positioning removed, now handled by flex parent .text */
+  position: absolute;
+  /* (50% card center) + (160px photo radius) = Aligned to photo right edge */
+  left: calc(50% + 160px); 
+  /* (46% photo offset down) + (5px vertical gap) = Positioned near photo bottom */
+  bottom: calc(46% + 5px); 
+  transform: translateX(-100%); /* Align the *right* edge of logo to calculated left point */
+  
   background: white;
   padding: 6px 14px;
   border-radius: 50px;
@@ -98,6 +102,7 @@ body {
   width: 65px;
   height: 35px;
   flex-shrink: 0;
+  z-index: 2; /* Ensure it stays above photo edge if they touch */
 }
 
 .logo img {
@@ -183,14 +188,12 @@ button {
     </div>
 
     <div class="text">
-        <div class="details">
-            <div class="name" id="name"></div>
-            <div class="title" id="title"></div>
-        </div>
-        
-        <div class="logo" id="logoBox" style="display:none;">
-            <img id="logoImg">
-        </div>
+        <div class="name" id="name"></div>
+        <div class="title" id="title"></div>
+    </div>
+
+    <div class="logo" id="logoBox" style="display:none;">
+        <img id="logoImg">
     </div>
 </div>
 
@@ -213,7 +216,6 @@ button {
 </div>
 
 <script>
-// Standard to Unicode Bold converter
 function makeBold(text) {
     const chars = {
         'a': '𝐚', 'b': '𝐛', 'c': '𝐜', 'd': '𝐝', 'e': '𝐞', 'f': '𝐟', 'g': '𝐠', 'h': '𝐡', 'i': '𝐢', 'j': '𝐣', 'k': '𝐤', 'l': '𝐥', 'm': '𝐦',
