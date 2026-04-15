@@ -20,31 +20,34 @@ body {
   font-family:'DM Sans';
 }
 
-/* CARD */
+/* CARD CONTAINER - Forced size for clean capture */
 #card {
   width:600px;
   height:600px;
   position:relative;
   overflow: hidden;
+  background: #232D45;
 }
 
 .bg {
   position:absolute;
   inset:0;
-  width:100%;
-  height:100%;
+  width:600px;
+  height:600px;
   object-fit:cover;
+  z-index: 1;
 }
 
 /* PHOTO */
 .photo {
   position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%, -46%); 
+  top:270px; /* Replaced transform-calc with fixed points for canvas stability */
+  left:300px;
+  transform: translate(-50%, -50%);
   width:320px; 
   height:320px;
   overflow:hidden;
+  z-index: 2;
 }
 
 .photo img {
@@ -57,11 +60,11 @@ body {
 .content-overlay {
   position:absolute;
   bottom:40px;
-  left:0;
-  right:0;
+  left:140px;
+  width: 320px; /* Fixed width matching photo for alignment stability */
   display: flex;
-  align-items: flex-start; 
-  padding: 0 140px; 
+  align-items: flex-start;
+  z-index: 3;
 }
 
 .text {
@@ -86,26 +89,23 @@ body {
   letter-spacing: 1px;
 }
 
-/* THE SUBTLE PILL CONTAINER (Increased by 7%) */
+/* PILL LOGO - Fixed positioning relative to the overlay */
 .logo-container {
-  position: absolute;
-  left: calc(50% + 160px); 
-  transform: translateX(-100%); 
   display: flex;
   align-items: center;
-  height: 34px; 
+  height: 34px;
 }
 
 .logo {
   background: white;
-  padding: 5px 14px; /* Slightly increased padding */
+  padding: 5px 14px;
   border-radius: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  width: 64px; /* Increased from 60px */
-  height: 34px; /* Increased from 32px */
+  width: 64px; 
+  height: 34px;
 }
 
 .logo img {
@@ -134,7 +134,6 @@ body {
   margin-top: -5px; 
   margin-bottom: 15px; 
   font-style: italic;
-  line-height: 1.4;
 }
 
 .link-item {
@@ -184,10 +183,10 @@ button {
 <body>
 
 <div id="card">
-    <img class="bg" src="https://futurefitasia.com/wp-content/uploads/2026/04/FFA2026-Promotion-Speaker-2.png">
+    <img class="bg" src="https://futurefitasia.com/wp-content/uploads/2026/04/FFA2026-Promotion-Speaker-2.png" crossOrigin="anonymous">
 
     <div class="photo">
-        <img id="photo">
+        <img id="photo" crossOrigin="anonymous">
     </div>
 
     <div class="content-overlay">
@@ -198,7 +197,7 @@ button {
 
         <div class="logo-container" id="logoBox" style="display:none;">
             <div class="logo">
-                <img id="logoImg">
+                <img id="logoImg" crossOrigin="anonymous">
             </div>
         </div>
     </div>
@@ -207,9 +206,7 @@ button {
 <div class="panel">
     <div class="box">
         <h3 style="margin-top:0; margin-bottom:8px;">LinkedIn Profiles</h3>
-        <p class="tag-reminder">
-            Please ensure all handles are accurately tagged to maximize post engagement and reach.
-        </p>
+        <p class="tag-reminder">Please ensure all handles are accurately tagged to maximize post engagement.</p>
         <div id="links"></div>
     </div>
 
@@ -219,7 +216,7 @@ button {
 
     <button onclick="copy()">Copy Caption</button>
     <button onclick="openLI()">Copy + Open LinkedIn</button>
-    <button onclick="download()">Download Image</button>
+    <button onclick="download()">Download HQ Image</button>
 </div>
 
 <script>
@@ -247,9 +244,7 @@ window.onload = () => {
     document.getElementById('title').textContent = d.job + " · " + d.company;
     document.getElementById('photo').src = d.photo;
 
-    let processedCaption = d.caption.replace(/\*\*(.*?)\*\*/g, (match, p1) => {
-        return makeBold(p1);
-    });
+    let processedCaption = d.caption.replace(/\*\*(.*?)\*\*/g, (match, p1) => makeBold(p1));
     document.getElementById('caption').value = processedCaption;
 
     if(d.logo){
@@ -263,11 +258,7 @@ window.onload = () => {
         container.href = l.url;
         container.target = "_blank";
         container.className = "link-item";
-        
-        container.innerHTML = `
-            <span class="link-name">${l.name}</span>
-            <span class="link-url">${l.url}</span>
-        `;
+        container.innerHTML = `<span class="link-name">${l.name}</span><span class="link-url">${l.url}</span>`;
         box.appendChild(container);
     });
 }
@@ -283,15 +274,24 @@ function openLI(){
 
 async function download(){
     const card = document.getElementById('card');
+    
+    // Specifically targeting the rendering engine to avoid "weird" cropping
     const canvas = await html2canvas(card, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: null
+        scale: 3, // High resolution
+        useCORS: true, // Crucial for external images
+        allowTaint: false,
+        backgroundColor: "#232D45",
+        width: 600,
+        height: 600,
+        x: 0,
+        y: 0,
+        scrollX: 0,
+        scrollY: -window.scrollY // Fixes cropping if page is scrolled
     });
 
     const link = document.createElement('a');
-    link.download = `Speaker-${document.getElementById('name').textContent}.png`;
-    link.href = canvas.toDataURL("image/png");
+    link.download = `FFA-Speaker-${document.getElementById('name').textContent}.png`;
+    link.href = canvas.toDataURL("image/png", 1.0);
     link.click();
 }
 </script>
