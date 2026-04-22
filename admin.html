@@ -1,79 +1,195 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Speaker Generator</title>
-<style>
-body { font-family: Arial, sans-serif; background: #232D45; color: white; padding: 40px; }
-.container { max-width: 600px; margin: auto; }
-input, textarea { width: 100%; padding: 10px; margin-bottom: 10px; border: none; background: #1b2235; color: white; box-sizing: border-box; }
-.row { display: flex; gap: 10px; }
-.row input { width: 50%; }
-button { width: 100%; padding: 14px; background: #DEFF4C; border: none; cursor: pointer; font-weight: bold; color: #1b2235; }
-.output { margin-top: 20px; background: #1b2235; padding: 15px; word-break: break-all; border-radius: 4px; min-height: 40px; }
-.output a { color: #DEFF4C; text-decoration: underline; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speaker Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #232D45;
+            color: white;
+            padding: 40px 20px;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 16px;
+            }
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: none;
+            background: #1b2235;
+            color: white;
+            box-sizing: border-box;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+
+            input,
+            textarea {
+                font-size: 16px;
+            }
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .row input {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #DEFF4C;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            color: #1b2235;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button:active {
+            opacity: 0.8;
+        }
+
+        .output {
+            margin-top: 20px;
+            background: #1b2235;
+            padding: 15px;
+            word-break: break-all;
+            border-radius: 4px;
+            min-height: 40px;
+        }
+
+        .output a {
+            color: #DEFF4C;
+            text-decoration: underline;
+        }
+
+        h4 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h2>Speaker Generator</h2>
-    <input id="name" placeholder="Full Name (Required)">
-    <input id="job" placeholder="Job Title (Required)">
-    <input id="company" placeholder="Company (Required)">
-    <input id="photo" placeholder="Speaker Photo URL (Required)">
-    <input id="logo" placeholder="Corporate Logo URL (optional)">
-    <textarea id="caption" placeholder="LinkedIn Caption"></textarea>
+    <div class="container">
+        <h2>Speaker Generator</h2>
+        <input id="name" placeholder="Full Name (Required)">
+        <input id="job" placeholder="Job Title (Required)">
+        <input id="company" placeholder="Company (Required)">
+        <input id="photo" placeholder="Speaker Photo URL (Required)">
+        <input id="logo" placeholder="Corporate Logo URL (optional)">
+        <textarea id="caption" placeholder="LinkedIn Caption"></textarea>
 
-    <h4>LinkedIn Profiles (optional)</h4>
-    <div class="row"><input id="n1" placeholder="Name 1"><input id="u1" placeholder="URL 1"></div>
-    <div class="row"><input id="n2" placeholder="Name 2"><input id="u2" placeholder="URL 2"></div>
-    <div class="row"><input id="n3" placeholder="Name 3"><input id="u3" placeholder="URL 3"></div>
-    <div class="row"><input id="n4" placeholder="Name 4"><input id="u4" placeholder="URL 4"></div>
-    <div class="row"><input id="n5" placeholder="Name 5"><input id="u5" placeholder="URL 5"></div>
+        <h4>LinkedIn Profiles (optional)</h4>
+        <div class="row"><input id="n1" placeholder="Name 1"><input id="u1" placeholder="URL 1"></div>
+        <div class="row"><input id="n2" placeholder="Name 2"><input id="u2" placeholder="URL 2"></div>
+        <div class="row"><input id="n3" placeholder="Name 3"><input id="u3" placeholder="URL 3"></div>
+        <div class="row"><input id="n4" placeholder="Name 4"><input id="u4" placeholder="URL 4"></div>
+        <div class="row"><input id="n5" placeholder="Name 5"><input id="u5" placeholder="URL 5"></div>
 
-    <button onclick="generate()">Generate Link</button>
-    <div class="output" id="output">Generated link will appear here...</div>
-</div>
+        <button onclick="generate()">Generate Link</button>
+        <div class="output" id="output">Generated link will appear here...</div>
+    </div>
 
-<script>
-function generate() {
-    const data = {
-        name: document.getElementById('name').value.trim(),
-        job: document.getElementById('job').value.trim(),
-        company: document.getElementById('company').value.trim(),
-        photo: document.getElementById('photo').value.trim(),
-        logo: document.getElementById('logo').value.trim(),
-        caption: document.getElementById('caption').value.trim(),
-        links: []
-    };
+    <script>
+        function generate() {
+            const data = {
+                name: document.getElementById('name').value.trim(),
+                job: document.getElementById('job').value.trim(),
+                company: document.getElementById('company').value.trim(),
+                photo: document.getElementById('photo').value.trim(),
+                logo: document.getElementById('logo').value.trim(),
+                caption: document.getElementById('caption').value.trim(),
+                links: []
+            };
 
-    if (!data.name || !data.job || !data.company || !data.photo) {
-        alert("Please fill in all required fields.");
-        return;
-    }
+            if (!data.name || !data.job || !data.company || !data.photo) {
+                alert("Please fill in all required fields.");
+                return;
+            }
 
-    for (let i = 1; i <= 5; i++) {
-        const n = document.getElementById('n' + i).value.trim();
-        const u = document.getElementById('u' + i).value.trim();
-        if (n && u) {
-            data.links.push({ name: n, url: u });
+            for (let i = 1; i <= 5; i++) {
+                const n = document.getElementById('n' + i).value.trim();
+                const u = document.getElementById('u' + i).value.trim();
+                if (n && u) {
+                    data.links.push({ name: n, url: u });
+                }
+            }
+
+            // Get the current folder path and point to index.html
+            const currentPath = window.location.pathname;
+            const directory = currentPath.substring(0, currentPath.lastIndexOf('/'));
+            const base = window.location.origin + directory + "/index.html";
+
+            // Store data in sessionStorage and redirect
+            sessionStorage.setItem("speakerData", JSON.stringify(data));
+
+            // Also create a direct link for sharing (uses URL params as fallback)
+            const encoded = encodeURIComponent(JSON.stringify(data));
+            const directURL = base + "?data=" + encoded;
+
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = '<strong>Success! Copy this link:</strong><br><a href="' + base + '" onclick="passData(event)" target="_blank">' + base + '</a><br><br><em>Note: Open the link in a new tab/window to see the speaker card.</em><br><br><strong>Alternative direct link:</strong><br><a href="' + directURL + '" target="_blank">' + directURL + '</a>';
+
+            // Store data again after displaying the link in case user opens in new tab
+            sessionStorage.setItem("speakerData", JSON.stringify(data));
         }
-    }
 
-    // Fixed path logic: gets the current folder path and points to index.html
-    const currentPath = window.location.pathname;
-    const directory = currentPath.substring(0, currentPath.lastIndexOf('/'));
-    const base = window.location.origin + directory + "/index.html";
-    
-    const encoded = encodeURIComponent(JSON.stringify(data));
-    const finalURL = base + "?data=" + encoded;
+        function passData(event) {
+            // Ensure data is in sessionStorage when opening new tab
+            const data = {
+                name: document.getElementById('name').value.trim(),
+                job: document.getElementById('job').value.trim(),
+                company: document.getElementById('company').value.trim(),
+                photo: document.getElementById('photo').value.trim(),
+                logo: document.getElementById('logo').value.trim(),
+                caption: document.getElementById('caption').value.trim(),
+                links: []
+            };
 
-    const outputDiv = document.getElementById('output');
-    outputDiv.innerHTML = '<strong>Success! Copy this link:</strong><br><a href="' + finalURL + '" target="_blank">' + finalURL + '</a>';
-}
-</script>
+            for (let i = 1; i <= 5; i++) {
+                const n = document.getElementById('n' + i).value.trim();
+                const u = document.getElementById('u' + i).value.trim();
+                if (n && u) {
+                    data.links.push({ name: n, url: u });
+                }
+            }
+
+            sessionStorage.setItem("speakerData", JSON.stringify(data));
+        }
+    </script>
 
 </body>
+
 </html>
